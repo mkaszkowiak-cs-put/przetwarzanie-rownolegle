@@ -16,7 +16,7 @@ bool isPrime(int num) {
     return true;
 }
 
-int getPrimesSize(int start, int end) {
+std::vector<int> greedy(int start, int end) {
     std::vector<int> primes;
 
     for (int i = start; i <= end; i++) {
@@ -25,7 +25,7 @@ int getPrimesSize(int start, int end) {
         }
     }
 
-    return primes.size();
+    return primes;
 }
 
 int main(int argc, char *argv[]) {
@@ -37,6 +37,6 @@ int main(int argc, char *argv[]) {
         end = atoi(argv[2]);
     }
 
-    measureTime("Po kolei", getPrimesSize, start, end);
+    measureTime("Greedy:", greedy, start, end);
     return 0;
 }
