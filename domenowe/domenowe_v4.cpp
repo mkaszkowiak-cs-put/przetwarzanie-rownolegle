@@ -6,6 +6,13 @@
 #include "../measure_time.cpp"
 #include "../print_primes.cpp"
 
+// Zadaniem realizowanym równolegle w jednym trybie podziału pracy
+// może być wykreślenie wszystkich wymaganych wielokrotności
+// podzbioru liczb pierwszych.
+
+// To jest raczej niepoprawne, bo nie równoleglimy wykreślania a wrzucanie do tablicy primes
+// Ale chociaż jest szybsze xD
+
 std::vector<int> sieveOfEratosthenes(int lower, int upper) {
     std::vector<int> primes;
     std::vector<bool> prime(upper + 1, true);
