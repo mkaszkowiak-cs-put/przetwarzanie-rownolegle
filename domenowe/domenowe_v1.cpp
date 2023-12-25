@@ -25,8 +25,6 @@ std::vector<int> findPrimes(int lower, int upper)
         }
     }
 
-    // printPrimes(prime, lower, upper);
-
     return primes;
 }
 

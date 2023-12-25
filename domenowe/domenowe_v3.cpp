@@ -13,13 +13,14 @@ std::vector<int> findPrimes(int lower, int upper)
     prime[0] = false;
     prime[1] = false;
 
-// Dynamiczne rozdzielanie iteracji pomiędzy wątki
+// Tworzymy sekcję parallel
 #pragma omp parallel
     {
         // Tworzymy lokalna kopie tablicy wątkow
         std::vector<bool> threadPrime = prime;
 
 // Wątek nie czeka na inne wątki az skonczą wykonywać pętle
+// Schedule jest w domyślnym trybie static
 #pragma omp for nowait
         for (int p = 2; p <= upper; p++)
         {
@@ -40,8 +41,6 @@ std::vector<int> findPrimes(int lower, int upper)
             }
         }
     }
-
-    // printPrimes(prime, lower, upper);
 
     return primes;
 }

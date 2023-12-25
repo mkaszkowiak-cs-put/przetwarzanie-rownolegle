@@ -53,8 +53,6 @@ std::vector<int> findPrimes(int lower, int upper)
         primes.insert(primes.end(), threadPrimes.begin(), threadPrimes.end());
     }
 
-    printPrimes(primes);
-
     return primes;
 }
 
