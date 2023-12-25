@@ -6,18 +6,23 @@
 #include "../measure_time.cpp"
 #include "../print_primes.cpp"
 
-std::vector<int> sieveOfEratosthenes(int lower, int upper) {
+std::vector<int> findPrimes(int lower, int upper)
+{
     std::vector<int> primes;
     std::vector<bool> prime(upper + 1, true);
-    prime[0] = prime[1] = false;
+    prime[0] = false;
+    prime[1] = false;
 
     std::vector<int> primesToSqrt;
     int sqrtUpper = sqrt(upper);
 
-    for (int p = 2; p <= sqrtUpper; p++) {
-        if (prime[p]) {
+    for (int p = 2; p <= sqrtUpper; p++)
+    {
+        if (prime[p])
+        {
             primesToSqrt.push_back(p);
-            for (int i = p * p; i <= sqrtUpper; i += p) {
+            for (int i = p * p; i <= sqrtUpper; i += p)
+            {
                 prime[i] = false;
             }
         }
@@ -25,27 +30,32 @@ std::vector<int> sieveOfEratosthenes(int lower, int upper) {
 
     int primesToSqrtSize = primesToSqrt.size();
 
-    #pragma omp parallel
+#pragma omp parallel
     {
         std::vector<bool> threadPrime = prime;
 
-        #pragma omp for schedule(dynamic)
-        for (int i = 0; i < primesToSqrtSize; ++i) {
+#pragma omp for schedule(dynamic)
+        for (int i = 0; i < primesToSqrtSize; ++i)
+        {
             int p = primesToSqrt[i];
-            for (int multiple = p * p; multiple <= upper; multiple += p) {
+            for (int multiple = p * p; multiple <= upper; multiple += p)
+            {
                 threadPrime[multiple] = false;
             }
         }
 
-        #pragma omp critical
-        for (int i = lower; i <= upper; ++i) {
-            if (!threadPrime[i]) {
+#pragma omp critical
+        for (int i = lower; i <= upper; ++i)
+        {
+            if (!threadPrime[i])
+            {
                 prime[i] = false;
             }
         }
     }
 
-    for (int p = lower; p <= upper; p++) {
+    for (int p = lower; p <= upper; p++)
+    {
         if (prime[p])
             primes.push_back(p);
     }
@@ -55,15 +65,17 @@ std::vector<int> sieveOfEratosthenes(int lower, int upper) {
     return primes;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int start = 2;
     int end = 20000000;
 
-    if(argc == 3) {
+    if (argc == 3)
+    {
         start = atoi(argv[1]);
         end = atoi(argv[2]);
     }
 
-    measureTime("Sito:", sieveOfEratosthenes, start, end);
+    measureTime("Sito:", findPrimes, start, end);
     return 0;
 }
