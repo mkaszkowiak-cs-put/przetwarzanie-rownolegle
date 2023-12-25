@@ -60,8 +60,6 @@ std::vector<int> findPrimes(int lower, int upper)
             primes.push_back(p);
     }
 
-    // printPrimes(primes, lower, upper);
-
     return primes;
 }
 

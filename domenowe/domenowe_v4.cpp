@@ -25,7 +25,7 @@ std::vector<int> findPrimes(int lower, int upper)
     {
         if (prime[p])
         {
-            for (int i = p * p; i <= upper; i += p)
+            for (int i = std::max(p * p, (lower + p - 1) / p * p); i <= upper; i += p)
             {
                 prime[i] = false;
             }
