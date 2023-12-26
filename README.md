@@ -1,30 +1,11 @@
-# przetwarzanie-rownolegle
-Projekt OMP do Walkusia
+# Przetwarzanie równoległe
 
-## Uruchomienie kodu:
+Projekt OMP
 
-```code
-cd koncepcyjne
-```
+## Uruchomienie benchmarków:
 
 ```code
-g++ .\1_greedy.cpp -static-libstdc++ -o 1_greedy.exe
+./run.sh
 ```
 
-```code
-.\1_greedy.exe <start> <end>
-```
-
-## Uruchomienie kodu wielowątkowego:
-
-```code
-cd domenowe
-```
-
-```code
-g++ .\domenowe_v1.cpp -static-libstdc++ -fopenmp -o domenowe_v1.exe
-```
-
-```code
-.\domenowe_v1.exe <start> <end>
-```
+Wyniki będą dostępne pod wyniki.csv.

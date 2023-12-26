@@ -28,6 +28,7 @@ def format_scientific(value):
     else:
         return '{:d}'.format(value)
 
+# TODO: możnaby zdumpować to do pliku csv, aby mieć od razu zrodelko w latex
 print(min_avgczas)
 
 # Save the modified DataFrame back to the CSV file
