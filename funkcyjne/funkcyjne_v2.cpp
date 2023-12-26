@@ -6,10 +6,11 @@
 #include "../measure_time.cpp"
 #include "../print_primes.cpp"
 
-std::vector<int> findPrimes(int lower, int upper)
+std::vector<int> findPrimes(int lower, int upper, long long *additions, long long *divisions)
 {
     std::vector<int> primes;
     std::vector<bool> prime(upper + 1, true);
+    (*additions) += 1;
     prime[0] = false;
     prime[1] = false;
 
@@ -18,11 +19,14 @@ std::vector<int> findPrimes(int lower, int upper)
 
     for (int p = 2; p <= sqrtUpper; p++)
     {
+        (*additions) += 1;
+
         if (prime[p])
         {
             primesToSqrt.push_back(p);
             for (int i = p * p; i <= sqrtUpper; i += p)
             {
+                (*additions) += 1;
                 prime[i] = false;
             }
         }
@@ -30,12 +34,16 @@ std::vector<int> findPrimes(int lower, int upper)
 
     int primesToSqrtSize = primesToSqrt.size();
 
-#pragma omp parallel for schedule(dynamic)
+    long long _additions, _divisions = 0;
+
+#pragma omp parallel for schedule(dynamic) reduction(+ : _additions, _divisions)
     for (int i = 0; i < primesToSqrtSize; ++i)
     {
+        _additions += 1;
         int p = primesToSqrt[i];
         for (int multiple = p * p; multiple <= upper; multiple += p)
         {
+            _additions += 1;
 // Brak ryzyka wyścigu
 #pragma omp critical
             prime[multiple] = false;
@@ -44,9 +52,13 @@ std::vector<int> findPrimes(int lower, int upper)
 
     for (int p = lower; p <= upper; p++)
     {
+        (*additions) += 1;
         if (prime[p])
             primes.push_back(p);
     }
+
+    (*additions) += _additions;
+    (*divisions) += _divisions;
 
     return primes;
 }
@@ -62,6 +74,6 @@ int main(int argc, char *argv[])
         end = atoi(argv[2]);
     }
 
-    measureTime("Sito:", findPrimes, start, end);
+    benchmark(findPrimes, "FUNKC-2");
     return 0;
 }

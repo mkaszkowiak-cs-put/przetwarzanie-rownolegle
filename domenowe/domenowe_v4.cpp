@@ -9,13 +9,10 @@
 // Zadaniem realizowanym równolegle w jednym trybie podziału pracy
 // może być wykreślenie wszystkich wymaganych wielokrotności
 // podzbioru liczb pierwszych.
-
-// To jest raczej niepoprawne, bo nie równoleglimy wykreślania a wrzucanie do tablicy primes
-// Ale chociaż jest szybsze xD
-
-std::vector<int> findPrimes(int lower, int upper)
+std::vector<int> findPrimes(int lower, int upper, long long *additions, long long *divisions)
 {
     std::vector<int> primes;
+    (*additions) += 1;
     std::vector<bool> prime(upper + 1, true);
     prime[0] = false;
     prime[1] = false;
@@ -23,17 +20,24 @@ std::vector<int> findPrimes(int lower, int upper)
     // Procesy otrzymują całą tablice wykreśleń
     for (int p = 2; p <= sqrt(upper); ++p)
     {
+        (*additions) += 1;
+
         if (prime[p])
         {
+            (*additions) += 1;
+            (*divisions) += 1;
             for (int i = std::max(p * p, (lower + p - 1) / p * p); i <= upper; i += p)
             {
+                (*additions) += 1;
                 prime[i] = false;
             }
         }
     }
 
+    long long _additions, _divisions = 0;
+
 // Dynamiczne rozdzielanie iteracji pomiędzy wątki
-#pragma omp parallel
+#pragma omp parallel reduction(+ : _additions, _divisions)
     {
         // Tworzymy lokalna kopie tablicy wątkow
         std::vector<int> threadPrimes = primes;
@@ -42,6 +46,7 @@ std::vector<int> findPrimes(int lower, int upper)
 #pragma omp for nowait
         for (int p = 2; p <= upper; p++)
         {
+            _additions += 1;
             if (prime[p])
             {
                 threadPrimes.push_back(p);
@@ -53,13 +58,16 @@ std::vector<int> findPrimes(int lower, int upper)
         primes.insert(primes.end(), threadPrimes.begin(), threadPrimes.end());
     }
 
+    (*additions) += _additions;
+    (*divisions) += _divisions;
+
     return primes;
 }
 
 int main(int argc, char *argv[])
 {
     int start = 2;
-    int end = 20000000;
+    int end = 200000000;
 
     if (argc == 3)
     {
@@ -67,6 +75,6 @@ int main(int argc, char *argv[])
         end = atoi(argv[2]);
     }
 
-    measureTime("Sito:", findPrimes, start, end);
+    benchmark(findPrimes, "DOMEN-4");
     return 0;
 }
